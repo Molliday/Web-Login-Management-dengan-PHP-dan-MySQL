@@ -8,6 +8,8 @@ use Pzn\BelajarPhpMvc\Model\UserRegisterRequest;
 use Pzn\BelajarPhpMvc\Repository\UserRepository;
 use Pzn\BelajarPhpMvc\Model\UserRegisterResponse;
 use Pzn\BelajarPhpMvc\Exception\ValidationException;
+use Pzn\BelajarPhpMvc\Model\UserLoginRequest;
+use Pzn\BelajarPhpMvc\Model\UserLoginResponse;
 
 class UserService
 {
@@ -54,6 +56,34 @@ class UserService
         if ($request->id == null || $request->name == null || $request->password == null ||
             trim($request->id) == "" || trim($request->name) == "" || trim($request->password) == "") {
             throw new ValidationException("Id, Name, Password can not blank");
+        }
+    }
+
+    public function login(UserLoginRequest $request): UserLoginResponse
+    {
+        $this->validateUserLoginRequest($request);
+
+        $user = $this->userRepository->findById($request->id);
+
+        if ($user == null) {
+            throw new ValidationException("Id or password is wrong");
+        }
+
+        if (password_verify($request->password, $user->password)) {
+            $response = new UserLoginResponse();
+            $response->user = $user;
+            return $response;
+        }else{
+            throw new ValidationException("Id or password is wrong");
+        }
+
+    }
+
+    private function validateUserLoginRequest(UserLoginRequest $request)
+    {
+        if ($request->id == null || $request->password == null ||
+            trim($request->id) == "" || trim($request->password) == "") {
+            throw new ValidationException("Id, Password can not blank");
         }
     }
 }

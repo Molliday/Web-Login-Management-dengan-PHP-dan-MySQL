@@ -6,7 +6,7 @@ class database
 {
     private static ?\PDO $pdo = null;
 
-    public static function getConnetion(string $env = "test") : \PDO
+    public static function getConnection(string $env = "test") : \PDO
     {
         if (self::$pdo == null) {
             // create new PDO

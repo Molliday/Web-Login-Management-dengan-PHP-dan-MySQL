@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Pzn\BelajarPhpMvc\Config\Database;
 use Pzn\BelajarPhpMvc\Domain\User;
 use Pzn\BelajarPhpMvc\Exception\ValidationException;
+use Pzn\BelajarPhpMvc\Model\UserLoginRequest;
 use Pzn\BelajarPhpMvc\Model\UserRegisterRequest;
 use Pzn\BelajarPhpMvc\Service\UserService;
 use Pzn\BelajarPhpMvc\Repository\UserRepository;
@@ -17,7 +18,7 @@ class UserServiceTest extends TestCase
 
     protected function setUp():void
     {
-        $connection = Database::getConnetion();
+        $connection = Database::getConnection();
         $this->userRepository = new UserRepository($connection);
         $this->userService = new UserService($this->userRepository);
 
@@ -69,6 +70,52 @@ class UserServiceTest extends TestCase
         $request->password = "rahasia";
 
         $this->userService->register($request);
+    }
+
+    public function testLoginNotFound()
+    {
+        $this->expectException(ValidationException::class);
+
+        $request = new UserLoginRequest();
+        $request->id = "figur";
+        $request->password = "figur";
+
+        $this->userService->login($request);
+    }
+
+    public function testLoginWrongPassword()
+    {
+        $user = new User();
+        $user->id = "figur";
+        $user->name = "Figur";
+        $user->password = password_hash("figur", PASSWORD_BCRYPT);
+
+        $this->expectException(ValidationException::class);
+
+        $request = new UserLoginRequest();
+        $request->id = "figur";
+        $request->password = "salah";
+
+        $this->userService->login($request);
+    }
+
+    public function testLoginSuccess()
+    {
+        $user = new User();
+        $user->id = "figur";
+        $user->name = "Figur";
+        $user->password = password_hash("figur", PASSWORD_BCRYPT);
+
+        $this->expectException(ValidationException::class);
+
+        $request = new UserLoginRequest();
+        $request->id = "figur";
+        $request->password = "Figur";
+
+        $response = $this->userService->login($request);
+
+        self::assertEquals($request->id, $response->user->id);
+        self::assertTrue(password_verify($request->password, $response->user->password));
     }
 
 }
