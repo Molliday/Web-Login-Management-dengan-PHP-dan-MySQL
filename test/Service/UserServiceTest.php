@@ -110,7 +110,7 @@ class UserServiceTest extends TestCase
 
         $request = new UserLoginRequest();
         $request->id = "figur";
-        $request->password = "Figur";
+        $request->password = "figur";
 
         $response = $this->userService->login($request);
 

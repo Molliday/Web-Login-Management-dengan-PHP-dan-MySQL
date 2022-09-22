@@ -5,6 +5,7 @@ namespace Pzn\BelajarPhpMvc\Controller;
 use Pzn\BelajarPhpMvc\App\View;
 use Pzn\BelajarPhpMvc\Config\Database;
 use Pzn\BelajarPhpMvc\Exception\ValidationException;
+use Pzn\BelajarPhpMvc\Model\UserLoginRequest;
 use Pzn\BelajarPhpMvc\Model\UserRegisterRequest;
 use Pzn\BelajarPhpMvc\Service\UserService;
 use Pzn\BelajarPhpMvc\Repository\UserRepository;
@@ -27,7 +28,7 @@ class UserController
         ]);
     }
 
-    public function postregister(){
+    public function postRegister(){
         $request = new UserRegisterRequest();
         $request->id = $_POST['id'];
         $request->name = $_POST['name'];
@@ -40,6 +41,30 @@ class UserController
         }catch (ValidationException $exception){
             View::render('User/register', [
                 'title' => 'Register new User',
+                'error' => $exception->getMessage()
+            ]);
+        }
+    }
+
+    public function login()
+    {
+        View::render('User/login', [
+            "title" => "Login user"
+        ]);
+    }
+
+    public function postLogin()
+    {
+        $request = new UserLoginRequest();
+        $request->id = $_POST['id'];
+        $request->password = $_POST['password'];
+
+        try {
+            $this->userService->login($request);
+            View::redirect('/');
+        } catch (ValidationException $exception) {
+            View::render('User/login', [
+                'title' => 'Login user',
                 'error' => $exception->getMessage()
             ]);
         }
