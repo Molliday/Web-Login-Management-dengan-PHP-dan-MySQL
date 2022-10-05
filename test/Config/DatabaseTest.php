@@ -8,13 +8,13 @@ class DatabaseTest extends TestCase
 {
     public function testGetConnection()
     {
-        $connection = Database::getConnetion();
+        $connection = Database::getConnection();
         self::assertNotNull($connection);
     }
     public function testGetConnectionSingleton()
     {
-        $connection1 = Database::getConnetion();
-        $connection2 = Database::getConnetion();
+        $connection1 = Database::getConnection();
+        $connection2 = Database::getConnection();
         self::assertSame($connection1, $connection2);
     }
 }
