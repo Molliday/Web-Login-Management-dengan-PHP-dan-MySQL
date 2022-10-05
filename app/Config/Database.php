@@ -2,7 +2,7 @@
 
 namespace Pzn\BelajarPhpMvc\Config;
 
-class database
+class Database
 {
     private static ?\PDO $pdo = null;
 
