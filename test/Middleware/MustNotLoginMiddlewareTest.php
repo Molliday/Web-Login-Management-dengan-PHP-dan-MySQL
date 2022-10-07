@@ -1,13 +1,8 @@
 <?php
 
-namespace Pzn\BelajarPhpMvc\App {
-
-    function header(string $value){
-        echo $value;
-    }
-}
-
 namespace Pzn\BelajarPhpMvc\Middleware{
+
+    require_once __DIR__ . '/../Helper/helper.php';
 
     use PHPUnit\Framework\TestCase;
     use Pzn\BelajarPhpMvc\Config\Database;

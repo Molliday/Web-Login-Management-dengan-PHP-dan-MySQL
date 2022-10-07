@@ -2,10 +2,12 @@
 
 namespace Pzn\BelajarPhpMvc\Controller;
 
+use Exception;
 use Pzn\BelajarPhpMvc\App\View;
 use Pzn\BelajarPhpMvc\Config\Database;
 use Pzn\BelajarPhpMvc\Exception\ValidationException;
 use Pzn\BelajarPhpMvc\Model\UserLoginRequest;
+use Pzn\BelajarPhpMvc\Model\UserPasswordUpdateRequest;
 use Pzn\BelajarPhpMvc\Model\UserProfileUpdateRequest;
 use Pzn\BelajarPhpMvc\Model\UserRegisterRequest;
 use Pzn\BelajarPhpMvc\Repository\SessionRepository;
@@ -117,5 +119,38 @@ class UserController
                 ]
             ]);
        }
+    }
+
+    public function updatePassword()
+    {
+        $user = $this->sessionService->current();
+        View::render('User/password', [
+            "title" => "Update user password",
+            "user" => [
+                "id" => $user->id
+                ]
+            ]);
+    }
+
+    public function postUpdatePassword()
+    {
+        $user = $this->sessionService->current();
+        $request = new UserPasswordUpdateRequest();
+        $request->id = $user->id;
+        $request->oldPassword = $_POST['oldPassword'];
+        $request->newPassword = $_POST['newPassword'];
+
+        try {
+            $this->userService->updatePassword($request);
+            View::redirect('/');
+        } catch (ValidationException $exception) {
+            View::render('User/password', [
+                "title" => "Update user password",
+                "error" => $exception->getMessage(),
+                "user" => [
+                    "id" => $user->id
+                    ]
+                ]);
+        }
     }
 }
